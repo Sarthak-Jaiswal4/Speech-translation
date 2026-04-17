@@ -14,8 +14,23 @@ class VoskSpeechRecognizer {
     private var service: SpeechService? = null
 
     fun initModel(modelDir: File) {
-        model = Model(modelDir.absolutePath)
-        recognizer = Recognizer(model, 16_000.0f)
+        if (!modelDir.isDirectory) {
+            throw IllegalStateException("Model path is not a directory: ${modelDir.absolutePath}")
+        }
+        val am = File(modelDir, "am")
+        val conf = File(modelDir, "conf")
+        if (!am.exists() || !conf.exists()) {
+            throw IllegalStateException("Invalid Vosk model folder (missing am/conf): ${modelDir.absolutePath}")
+        }
+        try {
+            model = Model(modelDir.absolutePath)
+            recognizer = Recognizer(model, 16_000.0f)
+        } catch (e: Throwable) {
+            throw IllegalStateException(
+                "Failed to create Vosk model at ${modelDir.absolutePath}: ${e.message}",
+                e
+            )
+        }
     }
 
     fun startListening(onPartial: (String) -> Unit, onFinal: (String) -> Unit) {

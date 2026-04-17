@@ -11,6 +11,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.assignment.ondevicetranslation.R
 import com.assignment.ondevicetranslation.data.model.SourceLanguage
@@ -37,6 +40,19 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val contentPad = (16 * resources.displayMetrics.density).toInt()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(
+                left = bars.left + contentPad,
+                top = bars.top + contentPad,
+                right = bars.right + contentPad,
+                bottom = bars.bottom + contentPad
+            )
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
 
         setupLanguageSpinner()
         binding.toggleButton.setOnClickListener {

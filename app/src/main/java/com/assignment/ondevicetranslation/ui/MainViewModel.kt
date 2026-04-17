@@ -43,8 +43,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 val modelDir = resolveSttDir(rootDir, language)
                 recognizer.initModel(modelDir)
 
-                val dictionaryFile = resolveDictionary(rootDir, language)
-                translator.load(dictionaryFile)
+                // Load built-in dictionary instead of downloaded file
+                translator.loadBuiltIn(language)
 
                 _uiState.update {
                     it.copy(status = "Ready", downloadStatus = "Models ready")
@@ -86,18 +86,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             SourceLanguage.HINDI -> ModelCatalog.hindiStt.fileName
             SourceLanguage.TELUGU -> ModelCatalog.teluguStt.fileName
         }
-        return File(rootDir, zipName.removeSuffix(".zip"))
-            .walkTopDown()
-            .firstOrNull { File(it, "am").exists() || File(it, "conf").exists() }
-            ?: File(rootDir, zipName.removeSuffix(".zip"))
-    }
-
-    private fun resolveDictionary(rootDir: File, language: SourceLanguage): File {
-        val fileName = when (language) {
-            SourceLanguage.HINDI -> ModelCatalog.hindiToEnglishDictionary.fileName
-            SourceLanguage.TELUGU -> ModelCatalog.teluguToEnglishDictionary.fileName
-        }
-        return File(rootDir, fileName)
+        val extractedBase = File(rootDir, zipName.removeSuffix(".zip"))
+        return ModelDownloadManager.findVoskModelRoot(extractedBase)
+            ?: throw IllegalStateException("Vosk model not found under ${extractedBase.absolutePath}")
     }
 
     override fun onCleared() {

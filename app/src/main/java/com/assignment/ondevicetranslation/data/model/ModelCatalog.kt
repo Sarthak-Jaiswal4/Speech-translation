@@ -27,22 +27,8 @@ object ModelCatalog {
         license = "Apache-2.0"
     )
 
-    val hindiToEnglishDictionary = ModelAsset(
-        id = "dict-hi-en",
-        url = "https://raw.githubusercontent.com/indicnlp/indicnlp_resources/master/transliteration/hi_en.json",
-        fileName = "hi_en.json",
-        license = "MIT"
-    )
-
-    val teluguToEnglishDictionary = ModelAsset(
-        id = "dict-te-en",
-        url = "https://raw.githubusercontent.com/indicnlp/indicnlp_resources/master/transliteration/te_en.json",
-        fileName = "te_en.json",
-        license = "MIT"
-    )
-
     fun requiredAssets(language: SourceLanguage): List<ModelAsset> = when (language) {
-        SourceLanguage.HINDI -> listOf(hindiStt, hindiToEnglishDictionary)
-        SourceLanguage.TELUGU -> listOf(teluguStt, teluguToEnglishDictionary)
+        SourceLanguage.HINDI -> listOf(hindiStt)
+        SourceLanguage.TELUGU -> listOf(teluguStt)
     }
 }
