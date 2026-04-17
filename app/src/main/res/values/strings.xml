@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">On-Device Translator</string>
+    <string name="start_listening">Start</string>
+    <string name="stop_listening">Stop</string>
+    <string name="source_text_label">Source Text</string>
+    <string name="translated_text_label">Translated Text (English)</string>
+    <string name="empty_text">-</string>
+    <string name="idle">Idle</string>
+    <string name="models_not_downloaded">Models not downloaded</string>
+</resources>

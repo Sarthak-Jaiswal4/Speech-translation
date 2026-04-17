@@ -1,0 +1,65 @@
+package com.assignment.ondevicetranslation.data.stt
+
+import android.util.Log
+import org.json.JSONObject
+import org.vosk.Model
+import org.vosk.Recognizer
+import org.vosk.android.RecognitionListener
+import org.vosk.android.SpeechService
+import java.io.File
+
+class VoskSpeechRecognizer {
+    private var model: Model? = null
+    private var recognizer: Recognizer? = null
+    private var service: SpeechService? = null
+
+    fun initModel(modelDir: File) {
+        model = Model(modelDir.absolutePath)
+        recognizer = Recognizer(model, 16_000.0f)
+    }
+
+    fun startListening(onPartial: (String) -> Unit, onFinal: (String) -> Unit) {
+        val currentRecognizer = recognizer ?: return
+        service = SpeechService(currentRecognizer, 16_000.0f).apply {
+            startListening(object : RecognitionListener {
+                override fun onPartialResult(hypothesis: String?) {
+                    onPartial(parseHypothesis(hypothesis))
+                }
+
+                override fun onResult(hypothesis: String?) {
+                    onFinal(parseHypothesis(hypothesis))
+                }
+
+                override fun onFinalResult(hypothesis: String?) {
+                    onFinal(parseHypothesis(hypothesis))
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("VoskSpeechRecognizer", "Recognition error", e)
+                }
+
+                override fun onTimeout() = Unit
+            })
+        }
+    }
+
+    fun stopListening() {
+        service?.stop()
+        service = null
+    }
+
+    fun release() {
+        stopListening()
+        recognizer?.close()
+        recognizer = null
+        model?.close()
+        model = null
+    }
+
+    private fun parseHypothesis(raw: String?): String {
+        if (raw.isNullOrBlank()) return ""
+        return runCatching {
+            JSONObject(raw).optString("text", "")
+        }.getOrDefault("")
+    }
+}
