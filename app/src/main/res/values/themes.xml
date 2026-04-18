@@ -1,8 +1,45 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.OnDeviceSpeechTranslation" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@android:color/holo_blue_dark</item>
-        <item name="colorPrimaryVariant">@android:color/holo_blue_light</item>
-        <item name="colorSecondary">@android:color/holo_green_dark</item>
-        <item name="android:statusBarColor" tools:targetApi="l">@android:color/black</item>
+
+    <!-- Force dark-only theme -->
+    <style name="Theme.OnDeviceSpeechTranslation" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/text_on_primary</item>
+        <item name="colorPrimaryContainer">@color/primary_surface</item>
+        <item name="colorOnPrimaryContainer">@color/primary_light</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/text_on_primary</item>
+        <item name="colorSecondaryContainer">@color/surface_variant</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorSurfaceVariant">@color/surface_variant</item>
+        <item name="colorOutline">@color/card_border</item>
+        <item name="colorOutlineVariant">@color/card_stroke</item>
+        <item name="colorError">@color/error</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/status_bar</item>
+        <item name="android:navigationBarColor" tools:targetApi="l">@color/background</item>
     </style>
+
+    <style name="Widget.App.Dropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxStrokeColor">@color/card_stroke</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="boxBackgroundColor">@color/surface_variant</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="endIconTint">@color/text_secondary</item>
+    </style>
+
+    <style name="Widget.App.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/surface_variant</item>
+        <item name="strokeColor">@color/card_border</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
 </resources>

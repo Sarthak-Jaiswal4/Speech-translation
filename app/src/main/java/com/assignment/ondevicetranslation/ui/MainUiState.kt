@@ -8,6 +8,6 @@ data class MainUiState(
     val sourceText: String = "",
     val translatedText: String = "",
     val status: String = "Idle",
-    val downloadProgress: Int = 0,
+    val downloadProgress: Float = 0f,
     val downloadStatus: String = "Models not downloaded"
 )

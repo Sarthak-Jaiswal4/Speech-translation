@@ -33,7 +33,11 @@ class VoskSpeechRecognizer {
         }
     }
 
-    fun startListening(onPartial: (String) -> Unit, onFinal: (String) -> Unit) {
+    fun startListening(
+        onPartial: (String) -> Unit,
+        onFinal: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
         val currentRecognizer = recognizer ?: return
         service = SpeechService(currentRecognizer, 16_000.0f).apply {
             startListening(object : RecognitionListener {
@@ -51,6 +55,7 @@ class VoskSpeechRecognizer {
 
                 override fun onError(e: Exception?) {
                     Log.e("VoskSpeechRecognizer", "Recognition error", e)
+                    onError(e?.message ?: "Unknown recognition error")
                 }
 
                 override fun onTimeout() = Unit
@@ -74,7 +79,8 @@ class VoskSpeechRecognizer {
     private fun parseHypothesis(raw: String?): String {
         if (raw.isNullOrBlank()) return ""
         return runCatching {
-            JSONObject(raw).optString("text", "")
+            val json = JSONObject(raw)
+            json.optString("text").ifBlank { json.optString("partial", "") }
         }.getOrDefault("")
     }
 }

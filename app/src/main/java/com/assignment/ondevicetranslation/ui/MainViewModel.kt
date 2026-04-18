@@ -8,6 +8,7 @@ import com.assignment.ondevicetranslation.data.model.ModelCatalog
 import com.assignment.ondevicetranslation.data.model.SourceLanguage
 import com.assignment.ondevicetranslation.data.stt.VoskSpeechRecognizer
 import com.assignment.ondevicetranslation.data.translation.LocalDictionaryTranslator
+import com.assignment.ondevicetranslation.data.translation.MlKitOfflineTranslator
 import com.assignment.ondevicetranslation.data.tts.AndroidTtsEngine
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,11 +16,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Locale
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val downloader = ModelDownloadManager(application)
     private val recognizer = VoskSpeechRecognizer()
     private val translator = LocalDictionaryTranslator()
+    private val mlKitTranslator = MlKitOfflineTranslator()
     private val tts = AndroidTtsEngine(application)
 
     private val _uiState = MutableStateFlow(MainUiState())
@@ -32,11 +35,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun initializeSelectedLanguage() {
         val language = _uiState.value.selectedLanguage
         viewModelScope.launch {
-            _uiState.update { it.copy(status = "Downloading models...") }
+            _uiState.update {
+                it.copy(
+                    status = "Downloading models...",
+                    downloadProgress = 0f,
+                    downloadStatus = "Preparing ${language.displayName} model... 0%"
+                )
+            }
             try {
                 val rootDir = downloader.ensureAssets(ModelCatalog.requiredAssets(language)) { progress, status ->
                     _uiState.update {
-                        it.copy(downloadProgress = progress, downloadStatus = status)
+                        it.copy(downloadProgress = progress / 100f, downloadStatus = status)
                     }
                 }
 
@@ -45,9 +54,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                 // Load built-in dictionary instead of downloaded file
                 translator.loadBuiltIn(language)
+                mlKitTranslator.prepare(language)
 
                 _uiState.update {
-                    it.copy(status = "Ready", downloadStatus = "Models ready")
+                    it.copy(status = "Ready", downloadStatus = "Models ready", downloadProgress = 1f)
                 }
             } catch (error: Exception) {
                 _uiState.update { it.copy(status = "Error: ${error.message}") }
@@ -63,22 +73,87 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
         recognizer.startListening(
             onPartial = { partial ->
-                _uiState.update { it.copy(sourceText = partial, status = "Listening...") }
+                if (partial.isNotBlank()) {
+                    _uiState.update { it.copy(sourceText = partial, status = "Listening...") }
+                }
             },
             onFinal = { transcript ->
-                val translated = translator.translateToEnglish(transcript)
-                tts.speak(translated)
+                recognizer.stopListening()
+                _uiState.update { it.copy(isListening = false) }
+                if (transcript.isBlank()) {
+                    _uiState.update {
+                        it.copy(status = "Didn't catch speech. Please speak clearly and retry.")
+                    }
+                    return@startListening
+                }
+                _uiState.update { it.copy(sourceText = transcript, status = "Translating...") }
+                viewModelScope.launch {
+                    val translated = mlKitTranslator.translate(transcript)
+                        ?: translator.translateToEnglish(transcript)
+                    val spokenText = if (translated.isBlank()) {
+                        "Text received successfully."
+                    } else {
+                        "Text received successfully. $translated"
+                    }
+                    tts.speak(spokenText, Locale.ENGLISH)
+                    _uiState.update {
+                        it.copy(
+                            sourceText = transcript,
+                            translatedText = translated,
+                            status = "Text received and translated"
+                        )
+                    }
+                }
+            },
+            onError = { message ->
                 _uiState.update {
-                    it.copy(
-                        sourceText = transcript,
-                        translatedText = translated,
-                        isListening = true,
-                        status = "Translated"
-                    )
+                    it.copy(isListening = false, status = "Speech error: $message")
                 }
             }
         )
         _uiState.update { it.copy(isListening = true, status = "Listening...") }
+    }
+
+    fun speakTypedTextAsEnglishTranslation(text: String) {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty()) {
+            _uiState.update { it.copy(status = "Type some text first.") }
+            return
+        }
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(sourceText = trimmed, status = "Translating typed text...")
+            }
+            val translated = mlKitTranslator.translate(trimmed)
+                ?: translator.translateToEnglish(trimmed)
+            val toSpeak = translated.ifBlank { trimmed }
+            tts.speak(toSpeak, Locale.ENGLISH)
+            _uiState.update {
+                it.copy(
+                    translatedText = translated,
+                    status = if (translated.isBlank()) "Speaking typed text" else "Speaking English translation"
+                )
+            }
+        }
+    }
+
+    fun speakTypedTextInSourceLanguage(text: String) {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty()) {
+            _uiState.update { it.copy(status = "Type some text first.") }
+            return
+        }
+        val locale = when (_uiState.value.selectedLanguage) {
+            SourceLanguage.HINDI -> Locale("hi", "IN")
+            SourceLanguage.TELUGU -> Locale("te", "IN")
+        }
+        tts.speak(trimmed, locale)
+        _uiState.update { state ->
+            state.copy(
+                sourceText = trimmed,
+                status = "Speaking in ${state.selectedLanguage.displayName}"
+            )
+        }
     }
 
     private fun resolveSttDir(rootDir: File, language: SourceLanguage): File {
@@ -93,6 +168,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     override fun onCleared() {
         recognizer.release()
+        mlKitTranslator.shutdown()
         tts.shutdown()
         super.onCleared()
     }

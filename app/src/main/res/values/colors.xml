@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary -->
+    <color name="primary">#8B80FF</color>
+    <color name="primary_dark">#6C63FF</color>
+    <color name="primary_light">#B0A8FF</color>
+    <color name="primary_surface">#1E1B3A</color>
+
+    <!-- Secondary -->
+    <color name="secondary">#FF6584</color>
+    <color name="secondary_light">#FF8FA3</color>
+
+    <!-- Dark Backgrounds -->
+    <color name="background">#0D0D1A</color>
+    <color name="surface">#161625</color>
+    <color name="surface_variant">#1E1E32</color>
+    <color name="surface_elevated">#222238</color>
+
+    <!-- Text on dark -->
+    <color name="text_primary">#E8E8FF</color>
+    <color name="text_secondary">#8888AA</color>
+    <color name="text_on_primary">#FFFFFF</color>
+    <color name="text_hint">#555570</color>
+
+    <!-- Semantic -->
+    <color name="success">#4ADE80</color>
+    <color name="error">#FF6B6B</color>
+
+    <!-- Gradient -->
+    <color name="gradient_start">#6C63FF</color>
+    <color name="gradient_mid">#7B5CF6</color>
+    <color name="gradient_end">#9855F7</color>
+
+    <!-- Card / Border -->
+    <color name="card_border">#2A2A45</color>
+    <color name="card_stroke">#33335A</color>
+    <color name="divider">#252545</color>
+
+    <!-- Status bar -->
+    <color name="status_bar">#080812</color>
+
+    <!-- Legacy aliases -->
+    <color name="translate_primary">@color/primary</color>
+    <color name="translate_primary_dark">@color/primary_dark</color>
+    <color name="translate_secondary">@color/primary_light</color>
+    <color name="translate_button">@color/primary</color>
+    <color name="translate_border">@color/card_border</color>
+    <color name="translate_title">@color/text_primary</color>
+    <color name="translate_body">@color/text_primary</color>
+</resources>

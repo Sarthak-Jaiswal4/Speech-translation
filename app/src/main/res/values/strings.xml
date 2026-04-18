@@ -1,10 +1,31 @@
 <resources>
     <string name="app_name">On-Device Translator</string>
-    <string name="start_listening">Start</string>
-    <string name="stop_listening">Stop</string>
+    <string name="start_listening">Start Speaking</string>
+    <string name="stop_listening">Stop Listening</string>
+    <string name="setup_title">Setting up your translator</string>
+    <string name="setup_subtitle">This only happens once</string>
+    <string name="setup_warning">Please stay connected to internet</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_telugu">Telugu</string>
     <string name="source_text_label">Source Text</string>
     <string name="translated_text_label">Translated Text (English)</string>
     <string name="empty_text">-</string>
     <string name="idle">Idle</string>
     <string name="models_not_downloaded">Models not downloaded</string>
+    <string name="tts_section_title">Text to Speech</string>
+    <string name="tts_input_hint">Type text here (Hindi, Telugu, or English)</string>
+    <string name="speak_english_translation">Speak English</string>
+    <string name="speak_source_language">Speak Source</string>
+    <string name="header_subtitle">Translate speech \u0026 text instantly</string>
+    <string name="mode_select_hint">Select Mode</string>
+    <string name="mode_speech_translation">🎙️  Speech Translation</string>
+    <string name="mode_text_to_speech">🔊  Text to Speech</string>
+    <string name="tts_page_title">Enter Your Text</string>
+    <string name="tts_page_subtitle">Type in any language and hear it spoken aloud</string>
+    <string name="speech_tap_hint">Tap the mic to start listening</string>
+
+    <string-array name="mode_options">
+        <item>🎙️  Speech Translation</item>
+        <item>🔊  Text to Speech</item>
+    </string-array>
 </resources>

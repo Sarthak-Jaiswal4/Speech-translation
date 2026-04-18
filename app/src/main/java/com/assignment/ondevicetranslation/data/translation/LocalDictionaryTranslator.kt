@@ -39,9 +39,13 @@ class LocalDictionaryTranslator {
     companion object {
         private val hindiDictionary = mapOf(
             "नमस्ते" to "hello",
+            "namaste" to "hello",
             "धन्यवाद" to "thank you",
+            "dhanyavaad" to "thank you",
             "हाँ" to "yes",
+            "haan" to "yes",
             "नहीं" to "no",
+            "nahi" to "no",
             "मैं" to "I",
             "तुम" to "you",
             "वह" to "he/she",
@@ -67,6 +71,7 @@ class LocalDictionaryTranslator {
             "बड़ा" to "big",
             "छोटा" to "small",
             "आज" to "today",
+            "aaj" to "today",
             "कल" to "tomorrow"
         )
 

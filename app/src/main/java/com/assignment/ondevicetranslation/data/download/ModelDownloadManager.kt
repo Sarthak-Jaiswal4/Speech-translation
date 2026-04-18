@@ -33,15 +33,22 @@ class ModelDownloadManager(
         assets: List<ModelAsset>,
         onProgress: (Int, String) -> Unit
     ): File = withContext(Dispatchers.IO) {
+        if (assets.isEmpty()) return@withContext modelsRoot
         assets.forEachIndexed { index, asset ->
             val file = File(modelsRoot, asset.fileName)
+            val rangeStart = (index.toFloat() / assets.size * 100f)
+            val rangeEnd = ((index + 1).toFloat() / assets.size * 100f)
             if (!file.exists()) {
-                download(asset, file)
+                download(asset, file) { fraction ->
+                    val progress = (rangeStart + (rangeEnd - rangeStart) * fraction)
+                        .toInt()
+                        .coerceIn(0, 100)
+                    onProgress(progress, "Downloading ${asset.id}... $progress%")
+                }
             }
 
             if (asset.fileName.endsWith(".zip")) {
-                validateZipHeader(file)
-                unzipIfNeeded(file)
+                ensureValidZip(asset, file)
                 val extracted = File(modelsRoot, file.nameWithoutExtension)
                 if (findVoskModelRoot(extracted) == null) {
                     throw IllegalStateException(
@@ -50,22 +57,59 @@ class ModelDownloadManager(
                 }
             }
 
-            val progress = ((index + 1).toFloat() / assets.size * 100).toInt()
+            val progress = rangeEnd.toInt().coerceIn(0, 100)
             onProgress(progress, "Ready: ${asset.id}")
         }
         modelsRoot
     }
 
-    private fun download(asset: ModelAsset, destination: File) {
+    private fun ensureValidZip(asset: ModelAsset, file: File) {
+        var attempts = 0
+        var lastError: Exception? = null
+        while (attempts < 2) {
+            attempts++
+            try {
+                validateZipHeader(file)
+                unzipIfNeeded(file)
+                return
+            } catch (e: Exception) {
+                lastError = e
+                file.delete()
+                File(modelsRoot, file.nameWithoutExtension).deleteRecursively()
+                if (attempts < 2) {
+                    download(asset, file) { }
+                }
+            }
+        }
+        throw IllegalStateException(
+            "Failed to prepare ${asset.fileName} after retry: ${lastError?.message}",
+            lastError
+        )
+    }
+
+    private fun download(asset: ModelAsset, destination: File, onProgress: (Float) -> Unit) {
         val request = Request.Builder().url(asset.url).build()
         client.newCall(request).execute().use { response ->
             if (!response.isSuccessful) {
                 throw IllegalStateException("Download failed for ${asset.id}: ${response.code}")
             }
             val body = response.body ?: throw IllegalStateException("Empty response body")
-            FileOutputStream(destination).use { output ->
-                body.byteStream().copyTo(output)
+            val totalBytes = body.contentLength().takeIf { it > 0L }
+            body.byteStream().use { input ->
+                FileOutputStream(destination).use { output ->
+                    val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+                    var bytesRead: Int
+                    var bytesWritten = 0L
+                    while (input.read(buffer).also { bytesRead = it } >= 0) {
+                        output.write(buffer, 0, bytesRead)
+                        bytesWritten += bytesRead
+                        if (totalBytes != null) {
+                            onProgress((bytesWritten.toFloat() / totalBytes).coerceIn(0f, 1f))
+                        }
+                    }
+                }
             }
+            onProgress(1f)
         }
     }
 
