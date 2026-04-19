@@ -83,8 +83,8 @@ Type any text (Hindi, Telugu, or English), then tap a button to hear it spoken i
 ### Translation Model (ML Kit)
 | Language Pair | Provider | Download | License |
 |---|---|---|---|
-| Hindi → English | Google ML Kit Translate 17.0.3 | Auto-downloaded on first use over WiFi | Apache-2.0 |
-| Telugu → English | Google ML Kit Translate 17.0.3 | Auto-downloaded on first use over WiFi | Apache-2.0 |
+| Hindi → English | Google ML Kit Translate 17.0.3 | Auto-downloaded on first use over internet | Apache-2.0 |
+| Telugu → English | Google ML Kit Translate 17.0.3 | Auto-downloaded on first use over internet | Apache-2.0 |
 
 ### Translation Dictionaries
 

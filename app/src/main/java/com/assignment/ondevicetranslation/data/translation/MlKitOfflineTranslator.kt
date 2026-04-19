@@ -28,7 +28,6 @@ class MlKitOfflineTranslator {
 
         val newTranslator = Translation.getClient(options)
         val conditions = DownloadConditions.Builder()
-            .requireWifi()
             .build()
 
         newTranslator.downloadModelIfNeeded(conditions).await()
