@@ -28,6 +28,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
+    init {
+        // Problem 3: TTS speaking callbacks
+        tts.setOnSpeakingStartListener {
+            _uiState.update { it.copy(isSpeaking = true) }
+        }
+        tts.setOnSpeakingDoneListener {
+            _uiState.update { it.copy(isSpeaking = false) }
+        }
+        // Problem 2: Check offline readiness on start
+        _uiState.update { it.copy(offlineStatus = checkOfflineStatus()) }
+    }
+
     fun setLanguage(language: SourceLanguage) {
         _uiState.update { it.copy(selectedLanguage = language) }
     }
@@ -39,7 +51,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 it.copy(
                     status = "Downloading models...",
                     downloadProgress = 0f,
-                    downloadStatus = "Preparing ${language.displayName} model... 0%"
+                    downloadStatus = "Preparing ${language.displayName} model... 0%",
+                    offlineStatus = OfflineStatus.DOWNLOADING
                 )
             }
             try {
@@ -57,10 +70,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 mlKitTranslator.prepare(language)
 
                 _uiState.update {
-                    it.copy(status = "Ready", downloadStatus = "Models ready", downloadProgress = 1f)
+                    it.copy(
+                        status = "Ready",
+                        downloadStatus = "Models ready",
+                        downloadProgress = 1f,
+                        offlineStatus = checkOfflineStatus()
+                    )
                 }
             } catch (error: Exception) {
-                _uiState.update { it.copy(status = "Error: ${error.message}") }
+                _uiState.update {
+                    it.copy(
+                        status = "Error: ${error.message}",
+                        offlineStatus = checkOfflineStatus()
+                    )
+                }
             }
         }
     }
@@ -154,6 +177,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 status = "Speaking in ${state.selectedLanguage.displayName}"
             )
         }
+    }
+
+    // ── Problem 2: Offline readiness check ─────────────────────
+    private fun checkOfflineStatus(): OfflineStatus {
+        val modelsDir = File(getApplication<Application>().filesDir, "models")
+        if (!modelsDir.exists()) return OfflineStatus.NOT_DOWNLOADED
+
+        val hindiBase = File(modelsDir, ModelCatalog.hindiStt.fileName.removeSuffix(".zip"))
+        val teluguBase = File(modelsDir, ModelCatalog.teluguStt.fileName.removeSuffix(".zip"))
+
+        val hindiReady = ModelDownloadManager.findVoskModelRoot(hindiBase) != null
+        val teluguReady = ModelDownloadManager.findVoskModelRoot(teluguBase) != null
+
+        return if (hindiReady && teluguReady) OfflineStatus.READY
+        else OfflineStatus.NOT_DOWNLOADED
     }
 
     private fun resolveSttDir(rootDir: File, language: SourceLanguage): File {

@@ -24,6 +24,15 @@
     <string name="tts_page_subtitle">Type in any language and hear it spoken aloud</string>
     <string name="speech_tap_hint">Tap the mic to start listening</string>
 
+    <!-- Offline status (Problem 2) -->
+    <string name="offline_ready">● Ready for offline use</string>
+    <string name="offline_downloading">● Downloading models…</string>
+    <string name="offline_not_downloaded">● Models not downloaded</string>
+
+    <!-- Copy (Problem 4) -->
+    <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="copy_translation">Copy translation</string>
+
     <string-array name="mode_options">
         <item>🎙️  Speech Translation</item>
         <item>🔊  Text to Speech</item>

@@ -24,6 +24,7 @@
 
     <!-- Semantic -->
     <color name="success">#4ADE80</color>
+    <color name="warning">#FBBF24</color>
     <color name="error">#FF6B6B</color>
 
     <!-- Gradient -->

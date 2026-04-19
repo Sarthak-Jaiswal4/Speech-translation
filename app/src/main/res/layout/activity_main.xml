@@ -161,6 +161,18 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ── OFFLINE STATUS BADGE (Problem 2) ── -->
+            <TextView
+                android:id="@+id/offlineStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:text="@string/offline_not_downloaded"
+                android:textColor="@color/error"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
             <!-- ── MODE DROPDOWN ── -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/modeDropdownLayout"
@@ -297,8 +309,7 @@
 
                         <View
                             android:layout_width="4dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="match_parent"
                             android:background="@drawable/bg_accent_bar_primary" />
 
                         <LinearLayout
@@ -347,8 +358,7 @@
 
                         <View
                             android:layout_width="4dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="match_parent"
                             android:background="@drawable/bg_accent_bar_secondary" />
 
                         <LinearLayout
@@ -358,14 +368,33 @@
                             android:layout_weight="99"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/translatedTextTitle"
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="@string/translated_text_label"
-                                android:textColor="@color/secondary_light"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/translatedTextTitle"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/translated_text_label"
+                                    android:textColor="@color/secondary_light"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/copyTranslatedButton"
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/copy_translation"
+                                    android:focusable="true"
+                                    android:padding="4dp"
+                                    android:src="@drawable/ic_copy" />
+                            </LinearLayout>
 
                             <TextView
                                 android:id="@+id/translatedText"
@@ -515,8 +544,7 @@
 
                         <View
                             android:layout_width="4dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="match_parent"
                             android:background="@drawable/bg_accent_bar_primary" />
 
                         <LinearLayout
@@ -564,8 +592,7 @@
 
                         <View
                             android:layout_width="4dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1"
+                            android:layout_height="match_parent"
                             android:background="@drawable/bg_accent_bar_secondary" />
 
                         <LinearLayout
@@ -575,13 +602,32 @@
                             android:layout_weight="99"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="@string/translated_text_label"
-                                android:textColor="@color/secondary_light"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="@string/translated_text_label"
+                                    android:textColor="@color/secondary_light"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <ImageView
+                                    android:id="@+id/copyTtsTranslatedButton"
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:background="?attr/selectableItemBackgroundBorderless"
+                                    android:clickable="true"
+                                    android:contentDescription="@string/copy_translation"
+                                    android:focusable="true"
+                                    android:padding="4dp"
+                                    android:src="@drawable/ic_copy" />
+                            </LinearLayout>
 
                             <TextView
                                 android:id="@+id/ttsTranslatedText"

@@ -77,8 +77,14 @@ Type any text (Hindi, Telugu, or English), then tap a button to hear it spoken i
 
 | Language | Model | License |
 |----------|-------|---------|
-| Hindi | [vosk-model-small-hi-0.22](https://alphacephei.com/vosk/models/vosk-model-small-hi-0.22.zip) | Apache-2.0 |
-| Telugu | [vosk-model-small-te-0.42](https://alphacephei.com/vosk/models/vosk-model-small-te-0.42.zip) | Apache-2.0 |
+| Hindi | [vosk-model-small-hi-0.22](https://github.com/Sarthak-Jaiswal4/Speech-translation/releases/download/v1.0/vosk-model-small-hi-0.22.zip) | Apache-2.0 |
+| Telugu | [vosk-model-small-te-0.42](https://github.com/Sarthak-Jaiswal4/Speech-translation/releases/download/v1.0/vosk-model-small-te-0.42.zip) | Apache-2.0 |
+
+### Translation Model (ML Kit)
+| Language Pair | Provider | Download | License |
+|---|---|---|---|
+| Hindi → English | Google ML Kit Translate 17.0.3 | Auto-downloaded on first use over WiFi | Apache-2.0 |
+| Telugu → English | Google ML Kit Translate 17.0.3 | Auto-downloaded on first use over WiFi | Apache-2.0 |
 
 ### Translation Dictionaries
 
@@ -90,6 +96,10 @@ Type any text (Hindi, Telugu, or English), then tap a button to hear it spoken i
 ---
 
 ## 🚀 Getting Started
+
+### Download APK
+Download the latest APK from 
+[GitHub Releases](https://github.com/Sarthak-Jaiswal4/Speech-translation/releases)
 
 ### Prerequisites
 
@@ -181,6 +191,10 @@ app/src/main/
 
 ## ⚠️ Limitations
 
+- ML Kit translation requires a one-time WiFi download from Google servers 
+  per language pair. After that it works fully offline.
+- Dictionary fallback covers only ~30 words per language and is used when 
+  ML Kit model has not yet been downloaded.
 - Translation layer uses a **dictionary-based** approach (not full neural MT).
 - STT accuracy depends on microphone quality and speaker accent.
 - Initial model download can be slow on weak connections.
